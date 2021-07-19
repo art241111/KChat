@@ -76,7 +76,10 @@ private fun BoxScope.BigScreen(
             },
             compactMode = true,
             robotsListProvider = robotsListProvider,
-            selectIndex = navigation.indexSelectedRobot
+            selectIndex = navigation.indexSelectedRobot,
+            deleteRobot = {
+                robotsListProvider.deleteRobot(it)
+            }
         )
 
         when (navigation.state.value) {
@@ -148,7 +151,10 @@ fun SmallScreen(
                     robotsListProvider.robots.value[position].connect()
                 },
                 robotsListProvider = robotsListProvider,
-                selectIndex = navigation.indexSelectedRobot
+                selectIndex = navigation.indexSelectedRobot,
+                deleteRobot = {
+                    robotsListProvider.deleteRobot(it)
+                }
             )
         }
     }
