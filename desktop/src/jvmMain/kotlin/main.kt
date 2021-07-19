@@ -14,6 +14,17 @@ fun main() {
             }
         )
     ) {
-        App(robotsListProviderImp)
+        App(
+            robotsListProvider = robotsListProviderImp,
+            onAddRobot = { robotName, robotIp, robotPort ->
+                robotsListProviderImp.addRobot(
+                    RobotImp(
+                        name = robotName,
+                        ip = robotIp,
+                        port = robotPort.toInt()
+                    )
+                )
+            }
+        )
     }
 }

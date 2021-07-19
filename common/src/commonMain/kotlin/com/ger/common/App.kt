@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ger.common.addScreen.AddNewRobotScreen
 import com.ger.common.data.Robot
 import com.ger.common.data.RobotsListProvider
 import com.ger.common.kChat.ChatScreen
@@ -22,7 +23,8 @@ import com.ger.common.utils.HorizontalSeparator
 
 @Composable
 fun App(
-    robotsListProvider: RobotsListProvider
+    robotsListProvider: RobotsListProvider,
+    onAddRobot: (robotName: String, robotIp: String, robotPort: String) -> Unit
 ) {
     val navigation = remember { Navigation() }
     val index = navigation.indexSelectedRobot
@@ -32,23 +34,20 @@ fun App(
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize().background(KChatTheme.colors.background)
         ) {
-
-            when (navigation.state.value) {
-                Screens.MAIN_SCREEN, Screens.CHAT -> {
-                    if (maxWidth > 500.dp) {
-                        BigScreen(
-                            robotsListProvider = robotsListProvider,
-                            navigation = navigation,
-                            robot = robot
-                        )
-                    } else {
-                        SmallScreen(
-                            robotsListProvider = robotsListProvider,
-                            navigation = navigation,
-                            robot = robot
-                        )
-                    }
-                }
+            if (maxWidth > 500.dp) {
+                BigScreen(
+                    robotsListProvider = robotsListProvider,
+                    navigation = navigation,
+                    robot = robot,
+                    onAddRobot = onAddRobot
+                )
+            } else {
+                SmallScreen(
+                    robotsListProvider = robotsListProvider,
+                    navigation = navigation,
+                    robot = robot,
+                    onAddRobot = onAddRobot
+                )
             }
         }
     }
@@ -60,13 +59,16 @@ private fun BoxScope.BigScreen(
     robotsListProvider: RobotsListProvider,
     navigation: Navigation,
     robot: Robot,
+    onAddRobot: (robotName: String, robotIp: String, robotPort: String) -> Unit
 ) {
     HorizontalSeparator(modifier = Modifier.align(Alignment.TopCenter), height = 1.dp)
 
     Row(modifier) {
         MainScreen(
             modifier = Modifier.width(250.dp),
-            addRobot = {},
+            addRobot = {
+                navigation.move(Screens.ADD_ROBOT)
+            },
             onSelectRobot = { position ->
                 navigation.chooseRobot(position)
                 navigation.move(Screens.CHAT)
@@ -77,54 +79,77 @@ private fun BoxScope.BigScreen(
             selectIndex = navigation.indexSelectedRobot
         )
 
-        if (navigation.state.value == Screens.CHAT) {
-            ChatScreen(
-                modifier = Modifier.weight(1f),
-                onSend = {
-                    if (it != "") {
-                        robot.sendMessage(it)
-                    }
-                },
-                onBack = { navigation.back() },
-                robot = robot,
-            )
-        } else {
-            // TODO: Add initial screen
+        when (navigation.state.value) {
+            Screens.CHAT -> {
+                ChatScreen(
+                    modifier = Modifier.weight(1f),
+                    onSend = {
+                        if (it != "") {
+                            robot.sendMessage(it)
+                        }
+                    },
+                    onBack = { navigation.back() },
+                    robot = robot,
+                )
+            }
+            Screens.ADD_ROBOT -> {
+                AddNewRobotScreen(
+                    modifier = Modifier.weight(1f),
+                    onBack = { navigation.back() },
+                    onAddRobot = onAddRobot
+                )
+            }
+            else -> {
+                // TODO: Add initial screen}
+            }
         }
     }
 }
 
 @Composable
-fun BoxScope.SmallScreen(
+fun SmallScreen(
     modifier: Modifier = Modifier,
     robotsListProvider: RobotsListProvider,
     navigation: Navigation,
     robot: Robot,
+    onAddRobot: (robotName: String, robotIp: String, robotPort: String) -> Unit
 ) {
-    if (navigation.state.value == Screens.MAIN_SCREEN) {
-        MainScreen(
-            modifier = modifier.fillMaxSize(),
-            addRobot = {},
-            onSelectRobot = { position ->
-                navigation.chooseRobot(position)
-                navigation.move(Screens.CHAT)
-                robotsListProvider.robots.value[position].connect()
-            },
-            robotsListProvider = robotsListProvider,
-            selectIndex = navigation.indexSelectedRobot
-        )
-    } else {
-        ChatScreen(
-            modifier = modifier,
-            onSend = {
-                if (it != "") {
-                    robot.sendMessage(it)
-                }
-            },
-            onBack = {
-                navigation.back()
-            },
-            robot = robot,
-        )
+    when (navigation.state.value) {
+        Screens.CHAT -> {
+            ChatScreen(
+                modifier = modifier,
+                onSend = {
+                    if (it != "") {
+                        robot.sendMessage(it)
+                    }
+                },
+                onBack = {
+                    navigation.back()
+                },
+                robot = robot,
+            )
+        }
+        Screens.ADD_ROBOT -> {
+            AddNewRobotScreen(
+                modifier = Modifier.fillMaxSize(),
+                onBack = { navigation.back() },
+                onAddRobot = onAddRobot
+            )
+        }
+        else -> {
+            MainScreen(
+                modifier = modifier.fillMaxSize(),
+                addRobot = {
+                    navigation.move(Screens.ADD_ROBOT)
+                },
+                onSelectRobot = { position ->
+                    navigation.chooseRobot(position)
+                    navigation.move(Screens.CHAT)
+                    robotsListProvider.robots.value[position].connect()
+                },
+                robotsListProvider = robotsListProvider,
+                selectIndex = navigation.indexSelectedRobot
+            )
+        }
     }
 }

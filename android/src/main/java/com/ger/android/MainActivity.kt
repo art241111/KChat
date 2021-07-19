@@ -8,8 +8,21 @@ import com.ger.common.App
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val robotsListProvider = RobotsListProviderImp()
+
         setContent {
-            App(RobotsListProviderImp())
+            App(
+                robotsListProvider = robotsListProvider,
+                onAddRobot = { robotName, robotIp, robotPort ->
+                    robotsListProvider.addRobot(
+                        RobotImp(
+                            name = robotName,
+                            ip = robotIp,
+                            port = robotPort.toInt()
+                        )
+                    )
+                }
+            )
         }
     }
 }
