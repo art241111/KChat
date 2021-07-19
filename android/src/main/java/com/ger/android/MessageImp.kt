@@ -7,6 +7,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 class MessageImp(
+    override val sender: Sender,
     override val text: String,
-    override val sender: Sender
-) : Parcelable, Message
+) : Parcelable, Message {
+    override fun toString(): String {
+        return "$sender:$text"
+    }
+}

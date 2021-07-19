@@ -30,8 +30,8 @@ class RobotImp(
 
     private var _chat = mutableStateOf(
         mutableListOf<Message>(
-            MessageImp("Hello, User", sender = Sender.ROBOT),
-            MessageImp("Hello, $name", sender = Sender.USER)
+            MessageImp(text = "Hello, User", sender = Sender.ROBOT),
+            MessageImp(text = "Hello, $name", sender = Sender.USER)
         )
     )
     override val chat: State<List<Message>> = _chat
@@ -65,7 +65,7 @@ class RobotImp(
                         val mutableChat = mutableListOf<Message>()
                         mutableChat.addAll(_chat.value)
 
-                        mutableChat.add(MessageImp(message, Sender.ROBOT))
+                        mutableChat.add(MessageImp(text = message, sender = Sender.ROBOT))
 
                         withContext(Dispatchers.Main) {
                             _chat.value = mutableChat
@@ -88,7 +88,7 @@ class RobotImp(
         val mutableChat = mutableListOf<Message>()
         mutableChat.addAll(_chat.value)
 
-        mutableChat.add(MessageImp(message, Sender.USER))
+        mutableChat.add(MessageImp(text = message, sender = Sender.USER))
 
         _chat.value = mutableChat
 
@@ -102,5 +102,43 @@ class RobotImp(
     override fun onCleared() {
         disconnect()
         super.onCleared()
+    }
+
+    override fun toString(): String {
+        return "$name\n" +
+            "$ip\n" +
+            "$port\n" +
+            "${color.red},${color.blue},${color.green}\n" +
+            _chat.value.joinToString("\n", postfix = "\n")
+    }
+
+    fun setChat(chat: List<MessageImp>) {
+        _chat.value = chat.toMutableList()
+    }
+
+    companion object {
+        fun getFromString(robotStr: String): RobotImp {
+            val split = robotStr.split("\n")
+            val chat = mutableListOf<MessageImp>()
+            for (i in 4 until split.size) {
+                val sender = if (split[i].substringBefore(":") == "ROBOT") Sender.ROBOT else Sender.USER
+                val message = split[i].substringAfter(":")
+                if (message.trim().isNotEmpty()) {
+                    chat.add(MessageImp(sender, message))
+                }
+            }
+
+            val colorSplit = split[3].split(",")
+
+            val robot = RobotImp(
+                name = split[0],
+                ip = split[1],
+                port = split[2].toInt(),
+                color = Color(colorSplit[0].toFloat(), colorSplit[1].toFloat(), colorSplit[2].toFloat())
+            )
+            robot.setChat(chat)
+
+            return robot
+        }
     }
 }

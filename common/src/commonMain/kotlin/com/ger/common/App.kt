@@ -28,7 +28,8 @@ fun App(
 ) {
     val navigation = remember { Navigation() }
     val index = navigation.indexSelectedRobot
-    val robot = robotsListProvider.robots.value[index.value]
+
+    val robot = if (index.value < robotsListProvider.robots.value.size) robotsListProvider.robots.value[index.value] else robotsListProvider.robots.value[0]
 
     KChatTheme {
         BoxWithConstraints(
