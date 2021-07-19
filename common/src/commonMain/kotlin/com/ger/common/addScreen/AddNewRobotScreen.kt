@@ -113,7 +113,7 @@ private fun EditText(
     placeholder: String,
     focusManager: FocusManager,
 ) {
-    //TODO: Разобраться с фокусом и переходом на сл view
+    // TODO: Разобраться с фокусом и переходом на сл view
     val isFocus = remember { mutableStateOf(false) }
     TextField(
         modifier = modifier.fillMaxWidth().onFocusEvent {
