@@ -2,10 +2,6 @@ package com.ger.common.nav
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Stack
 
 class Navigation {
@@ -30,10 +26,12 @@ class Navigation {
         _stack.push(screens)
     }
 
-    fun back() {
-        if (_stack.size > 0) {
+    fun back(): Boolean {
+        return if (_stack.size > 0) {
             _stack.pop()
             _state.value = _stack.peek()
-        }
+
+            false
+        } else true
     }
 }

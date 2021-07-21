@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.ger.common.App
+import com.ger.common.nav.Navigation
 
 class MainActivity : AppCompatActivity() {
     private val APP_PREFERENCES = "KCHAT"
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity() {
 
     private val robotsListProvider = RobotsListProviderImp()
 
+    private val navigation = Navigation()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,8 +32,15 @@ class MainActivity : AppCompatActivity() {
                             port = robotPort.toInt()
                         )
                     )
-                }
+                },
+                navigation = navigation
             )
+        }
+    }
+
+    override fun onBackPressed() {
+        if (navigation.back()) {
+            super.onBackPressed()
         }
     }
 
