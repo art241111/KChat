@@ -1,29 +1,34 @@
 import androidx.compose.desktop.LocalAppWindow
 import androidx.compose.desktop.Window
 import androidx.compose.desktop.WindowEvents
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import com.ger.common.App
 import com.ger.common.nav.Navigation
 
-fun main() {
+@OptIn(ExperimentalComposeUiApi::class)
+fun main() = application {
     val robotsListProviderImp = RobotsListProviderImp()
     val navigation = Navigation()
-    Window(
-        title = "KChat",
-        undecorated = false,
-        events = WindowEvents(
-            onClose = {
-                robotsListProviderImp.disconnectAll()
-            }
-        )
-    ) {
-        LocalAppWindow.current.keyboard.setShortcut(
-            key = Key.Escape,
-            callback = {
-                navigation.back()
-            }
-        )
 
+    androidx.compose.ui.window.Window(
+        onCloseRequest = ::exitApplication,
+        title = "KChat",
+        state = rememberWindowState(width = 1000.dp, height = 800.dp),
+        onKeyEvent = {
+            when (it.key) {
+                Key.Escape -> {
+                    navigation.back()
+                    true
+                }
+                else -> false
+            }
+        }
+    ) {
         App(
             navigation = navigation,
             robotsListProvider = robotsListProviderImp,

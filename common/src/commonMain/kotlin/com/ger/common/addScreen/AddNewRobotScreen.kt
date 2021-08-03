@@ -22,6 +22,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
@@ -106,6 +107,7 @@ private fun Header(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EditText(
     modifier: Modifier = Modifier,
@@ -153,6 +155,7 @@ private fun EditText(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EditPort(
     modifier: Modifier = Modifier,

@@ -2,7 +2,7 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.4.0"
+    id("org.jetbrains.compose")  version "0.5.0-build270"
     id("com.android.library")
     id("kotlin-android-extensions")
 }
@@ -36,8 +36,8 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                api("androidx.appcompat:appcompat:1.3.0")
-                api("androidx.core:core-ktx:1.5.0")
+                api("androidx.appcompat:appcompat:1.3.1")
+                api("androidx.core:core-ktx:1.6.0")
             }
         }
         val androidTest by getting {
@@ -59,5 +59,5 @@ android {
     }
 }
 dependencies {
-    implementation("androidx.compose.runtime:runtime:1.0.0-rc02")
+    implementation("androidx.compose.runtime:runtime:1.0.0")
 }
