@@ -48,7 +48,6 @@ fun AddNewRobotScreen(
     val robotIp = remember { mutableStateOf("192.168.0.1") }
     val robotPort = remember { mutableStateOf("100") }
 
-    val focusManager = LocalFocusManager.current
 
     val onDone = {
         if (robotName.value.isNotEmpty()) {
@@ -63,9 +62,9 @@ fun AddNewRobotScreen(
     ) {
         Header(onBack = onBack)
         Spacer(modifier = Modifier.height(6.dp))
-        EditText(value = robotName, placeholder = S.strings.addRobotName, focusManager = focusManager)
+        EditText(value = robotName, placeholder = S.strings.addRobotName)
         Spacer(modifier = Modifier.height(6.dp))
-        EditText(value = robotIp, placeholder = S.strings.addRobotIp, focusManager = focusManager)
+        EditText(value = robotIp, placeholder = S.strings.addRobotIp)
         Spacer(modifier = Modifier.height(6.dp))
         EditPort(value = robotPort, placeholder = S.strings.addRobotPort, onDone = onDone)
         Spacer(modifier = Modifier.height(6.dp))
@@ -113,26 +112,9 @@ private fun EditText(
     modifier: Modifier = Modifier,
     value: MutableState<String>,
     placeholder: String,
-    focusManager: FocusManager,
 ) {
-    // TODO: Разобраться с фокусом и переходом на сл view
-    val isFocus = remember { mutableStateOf(false) }
     TextField(
-        modifier = modifier.fillMaxWidth().onFocusEvent {
-            isFocus.value = it.isFocused
-        }.onPreviewKeyEvent {
-            when (it.key) {
-                Key.Enter, Key.Tab -> {
-                    if (isFocus.value) {
-                        focusManager.moveFocus(FocusDirection.Down)
-                        isFocus.value = false
-                    }
-
-                    true
-                }
-                else -> false
-            }
-        },
+        modifier = modifier.fillMaxWidth(),
         value = value.value,
         onValueChange = {
             value.value = it
@@ -147,11 +129,6 @@ private fun EditText(
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next
         ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-        )
     )
 }
 
