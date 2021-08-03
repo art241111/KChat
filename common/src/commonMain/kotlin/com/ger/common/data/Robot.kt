@@ -22,6 +22,9 @@ abstract class Robot {
                 "$ip\n" +
                 "$port\n" +
                 "${color.red};${color.green};${color.blue}" +
-                chat.value.joinToString(prefix = "\n", separator = "\n")
+                if (chat.value.isNotEmpty())
+                    chat.value.joinToString(prefix = "\n", separator = "\n")
+                else
+                    ""
     }
 }
