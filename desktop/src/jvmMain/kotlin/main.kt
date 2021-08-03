@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 import saveData.FileDataHelper
 import saveData.Result
 
-@OptIn(ExperimentalComposeUiApi::class, kotlinx.coroutines.DelicateCoroutinesApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
     val coroutineScope = rememberCoroutineScope()
 
@@ -25,8 +25,7 @@ fun main() = application {
 
     coroutineScope.launch {
         withContext(Dispatchers.Default) {
-            val f: Result = FileDataHelper.getContentAsync("robot.data")
-            when (f) {
+            when (val f: Result = FileDataHelper.getContentAsync("robot.data")) {
                 is Result.Success -> createRoboListProvider(f.data, robotsListProviderImp, coroutineScope)
                 is Result.Error -> createRoboListProvider("", robotsListProviderImp, coroutineScope)
             }
