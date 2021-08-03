@@ -47,12 +47,15 @@ class RobotImp(
 
                 coroutineScope.launch(Dispatchers.IO) {
                     client.incomingText.collect { message ->
-                        val mutableChat = mutableListOf<Message>()
-                        mutableChat.addAll(_chat.value)
+                        // Это условие связано с тем, что робот пересылает сообщение с символом '>' или без символа
+                        if (message.first() != '>') {
+                            val mutableChat = mutableListOf<Message>()
+                            mutableChat.addAll(_chat.value)
 
-                        mutableChat.add(MessageImp(message, Sender.ROBOT))
+                            mutableChat.add(MessageImp(message, Sender.ROBOT))
 
-                        _chat.value = mutableChat
+                            _chat.value = mutableChat
+                        }
                     }
                 }
             }
