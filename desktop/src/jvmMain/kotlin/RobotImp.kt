@@ -17,7 +17,7 @@ class RobotImp(
     override val ip: String = "",
     override val port: Int = 0,
     override val color: Color = Color.generateRandomColor(),
-) : Robot {
+) : Robot() {
     private val _isConnect = mutableStateOf(false)
     override val isConnect: State<Boolean> = _isConnect
 
@@ -65,12 +65,7 @@ class RobotImp(
         }
     }
 
-    private val _chat = mutableStateOf(
-        mutableListOf<Message>(
-            MessageImp("Hello, User", sender = Sender.ROBOT),
-            MessageImp("Hello, $name", sender = Sender.USER)
-        )
-    )
+    private val _chat = mutableStateOf(mutableListOf<Message>())
     override val chat: State<List<Message>> = _chat
 
     override fun sendMessage(message: String) {
@@ -83,6 +78,40 @@ class RobotImp(
 
         if (client.statusState.value == Status.COMPLETED) {
             client.send(message)
+        }
+    }
+
+    fun addMessages(messages: List<Message>) {
+        _chat.value.addAll(messages)
+    }
+
+    companion object {
+        fun getRobotFromString(string: String): Robot {
+            val split = string.split("\n")
+            val name = split[0].trim()
+            val ip = split[1].trim()
+            val port = split[2].trim()
+            val color = split[3].trim().split(";")
+
+            val robot = RobotImp(
+                name = name,
+                ip = ip,
+                port = port.toInt(),
+                color = Color(color[0].toFloat(), color[1].toFloat(), color[2].toFloat())
+            )
+            val messages = mutableListOf<Message>()
+            for (i in 4..split.lastIndex) {
+                val messageSplit = split[i].split(":")
+                messages.add(
+                    MessageImp(
+                        sender = Sender.values()[messageSplit[0].toInt()],
+                        text = messageSplit[1].trim()
+                    )
+                )
+            }
+            robot.addMessages(messages)
+
+            return robot
         }
     }
 }

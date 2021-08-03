@@ -1,3 +1,4 @@
+import RobotImp.Companion.getRobotFromString
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -9,11 +10,7 @@ import kotlinx.coroutines.launch
 class RobotsListProviderImp : RobotsListProvider {
     private val _robots: MutableState<List<Robot>> = mutableStateOf(
         mutableListOf(
-            RobotImp("Main1", "192.168.56.1", port = 9999),
-            RobotImp("Main2", "192.168.0.2", port = 9105),
-            RobotImp("Main3", "127.0.0.1", port = 9105),
-            RobotImp("Robot 1", "192.168.0.1"),
-            RobotImp("Robot 2", "192.168.0.1"),
+
         )
     )
 
@@ -40,6 +37,34 @@ class RobotsListProviderImp : RobotsListProvider {
         GlobalScope.launch {
             robots.value.forEach {
                 it.disconnect()
+            }
+        }
+    }
+
+    override fun toString(): String {
+        return _robots.value.joinToString(separator = "\n\n")
+    }
+
+
+    companion object {
+        fun createRoboListProvider(string: String, robotsListProviderImp: RobotsListProviderImp) {
+            return if (string.isEmpty()) {
+                val defaultRobots = listOf(
+                    RobotImp("Main1", "192.168.56.1", port = 9999),
+                    RobotImp("Main2", "192.168.0.2", port = 9105),
+                    RobotImp("Main3", "127.0.0.1", port = 9105),
+                    RobotImp("Robot 1", "192.168.0.1"),
+                    RobotImp("Robot 2", "192.168.0.1"),
+                )
+
+                for (robot in defaultRobots) {
+                    robotsListProviderImp.addRobot(robot)
+                }
+            } else {
+                val split = string.split("\n\n")
+                for (robotStr in split) {
+                    robotsListProviderImp.addRobot(getRobotFromString(robotStr))
+                }
             }
         }
     }
