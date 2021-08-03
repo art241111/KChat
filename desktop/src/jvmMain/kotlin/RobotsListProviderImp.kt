@@ -51,11 +51,8 @@ class RobotsListProviderImp(private val coroutineScope: CoroutineScope) : Robots
         ) {
             return if (string.isEmpty()) {
                 val defaultRobots = listOf(
-                    RobotImp("Main1", "192.168.56.1", port = 9999, coroutineScope = coroutineScope),
-                    RobotImp("Main2", "192.168.0.2", port = 9105, coroutineScope = coroutineScope),
-                    RobotImp("Main3", "127.0.0.1", port = 9105, coroutineScope = coroutineScope),
-                    RobotImp("Robot 1", "192.168.0.1", coroutineScope = coroutineScope),
-                    RobotImp("Robot 2", "192.168.0.1", coroutineScope = coroutineScope),
+                    RobotImp("KIDE", "localhost", port = 9105, coroutineScope = coroutineScope),
+                    RobotImp("Robot", "192.168.0.2", port = 23, coroutineScope = coroutineScope),
                 )
 
                 for (robot in defaultRobots) {
