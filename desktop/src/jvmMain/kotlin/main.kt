@@ -22,7 +22,7 @@ fun main() = application {
 
     GlobalScope.launch {
         withContext(Dispatchers.Default) {
-            val f: Result = FileDataHelper.getContentAsync("robot.txt")
+            val f: Result = FileDataHelper.getContentAsync("robot.data")
             when (f) {
                 is Result.Success -> createRoboListProvider(f.data, robotsListProviderImp)
                 is Result.Error -> createRoboListProvider("", robotsListProviderImp)
@@ -36,7 +36,7 @@ fun main() = application {
         onCloseRequest = {
             robotsListProviderImp.disconnectAll()
             GlobalScope.launch(Dispatchers.IO) {
-                FileDataHelper.writeContentAsync("robot.txt", robotsListProviderImp.toString().toByteArray())
+                FileDataHelper.writeContentAsync("robot.data", robotsListProviderImp.toString().toByteArray())
             }
             this.exitApplication()
 

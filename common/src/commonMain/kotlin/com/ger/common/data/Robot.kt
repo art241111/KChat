@@ -21,7 +21,7 @@ abstract class Robot {
         return "$name\n" +
                 "$ip\n" +
                 "$port\n" +
-                "${color.red};${color.green};${color.blue}\n" +
-                chat.value.joinToString(separator = "\n")
+                "${color.red};${color.green};${color.blue}" +
+                chat.value.joinToString(prefix = "\n", separator = "\n")
     }
 }
