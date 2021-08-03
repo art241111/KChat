@@ -1,4 +1,5 @@
 import RobotsListProviderImp.Companion.createRoboListProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -9,7 +10,7 @@ import androidx.compose.ui.window.rememberWindowState
 import com.ger.common.App
 import com.ger.common.nav.Navigation
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import saveData.FileDataHelper
@@ -17,27 +18,28 @@ import saveData.Result
 
 @OptIn(ExperimentalComposeUiApi::class, kotlinx.coroutines.DelicateCoroutinesApi::class)
 fun main() = application {
-    val robotsListProviderImp = RobotsListProviderImp()
+    val coroutineScope = rememberCoroutineScope()
+
+    val robotsListProviderImp = RobotsListProviderImp(coroutineScope)
     val navigation = Navigation()
 
-    GlobalScope.launch {
+    coroutineScope.launch {
         withContext(Dispatchers.Default) {
             val f: Result = FileDataHelper.getContentAsync("robot.data")
             when (f) {
-                is Result.Success -> createRoboListProvider(f.data, robotsListProviderImp)
-                is Result.Error -> createRoboListProvider("", robotsListProviderImp)
+                is Result.Success -> createRoboListProvider(f.data, robotsListProviderImp, coroutineScope)
+                is Result.Error -> createRoboListProvider("", robotsListProviderImp, coroutineScope)
             }
         }
     }
 
-
-
     Window(
         onCloseRequest = {
             robotsListProviderImp.disconnectAll()
-            GlobalScope.launch(Dispatchers.IO) {
+            coroutineScope.launch(Dispatchers.IO) {
                 FileDataHelper.writeContentAsync("robot.data", robotsListProviderImp.toString().toByteArray())
             }
+            coroutineScope.cancel()
             this.exitApplication()
 
         },
@@ -61,7 +63,8 @@ fun main() = application {
                     RobotImp(
                         name = robotName,
                         ip = robotIp,
-                        port = robotPort.toInt()
+                        port = robotPort.toInt(),
+                        coroutineScope = coroutineScope
                     )
                 )
             }

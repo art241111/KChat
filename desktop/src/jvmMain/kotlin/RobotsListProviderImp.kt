@@ -4,15 +4,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.ger.common.data.Robot
 import com.ger.common.data.RobotsListProvider
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class RobotsListProviderImp : RobotsListProvider {
-    private val _robots: MutableState<List<Robot>> = mutableStateOf(
-        mutableListOf(
-
-        )
-    )
+class RobotsListProviderImp(private val coroutineScope: CoroutineScope) : RobotsListProvider {
+    private val _robots: MutableState<List<Robot>> = mutableStateOf(mutableListOf())
 
     override val robots: State<List<Robot>>
         get() = _robots
@@ -34,7 +31,7 @@ class RobotsListProviderImp : RobotsListProvider {
     }
 
     fun disconnectAll() {
-        GlobalScope.launch {
+        coroutineScope.launch {
             robots.value.forEach {
                 it.disconnect()
             }
@@ -47,14 +44,18 @@ class RobotsListProviderImp : RobotsListProvider {
 
 
     companion object {
-        fun createRoboListProvider(string: String, robotsListProviderImp: RobotsListProviderImp) {
+        fun createRoboListProvider(
+            string: String,
+            robotsListProviderImp: RobotsListProviderImp,
+            coroutineScope: CoroutineScope
+        ) {
             return if (string.isEmpty()) {
                 val defaultRobots = listOf(
-                    RobotImp("Main1", "192.168.56.1", port = 9999),
-                    RobotImp("Main2", "192.168.0.2", port = 9105),
-                    RobotImp("Main3", "127.0.0.1", port = 9105),
-                    RobotImp("Robot 1", "192.168.0.1"),
-                    RobotImp("Robot 2", "192.168.0.1"),
+                    RobotImp("Main1", "192.168.56.1", port = 9999, coroutineScope = coroutineScope),
+                    RobotImp("Main2", "192.168.0.2", port = 9105, coroutineScope = coroutineScope),
+                    RobotImp("Main3", "127.0.0.1", port = 9105, coroutineScope = coroutineScope),
+                    RobotImp("Robot 1", "192.168.0.1", coroutineScope = coroutineScope),
+                    RobotImp("Robot 2", "192.168.0.1", coroutineScope = coroutineScope),
                 )
 
                 for (robot in defaultRobots) {
@@ -63,7 +64,7 @@ class RobotsListProviderImp : RobotsListProvider {
             } else {
                 val split = string.split("\n\n")
                 for (robotStr in split) {
-                    robotsListProviderImp.addRobot(getRobotFromString(robotStr))
+                    robotsListProviderImp.addRobot(getRobotFromString(robotStr, coroutineScope = coroutineScope))
                 }
             }
         }

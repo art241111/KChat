@@ -7,6 +7,7 @@ import com.ger.common.kChat.data.Sender
 import com.ger.common.utils.generateRandomColor
 import com.github.art241111.tcpClient.Client
 import com.github.art241111.tcpClient.connection.Status
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
@@ -17,6 +18,7 @@ class RobotImp(
     override val ip: String = "",
     override val port: Int = 0,
     override val color: Color = Color.generateRandomColor(),
+    val coroutineScope: CoroutineScope
 ) : Robot() {
     private val _isConnect = mutableStateOf(false)
     override val isConnect: State<Boolean> = _isConnect
@@ -29,7 +31,7 @@ class RobotImp(
 
     init {
         if (port != 0 && ip != "") {
-            GlobalScope.launch(Dispatchers.IO) {
+            coroutineScope.launch(Dispatchers.IO) {
                 println(name)
 
                 client.connect(
@@ -37,13 +39,13 @@ class RobotImp(
                     port
                 )
 
-                GlobalScope.launch(Dispatchers.IO) {
+                coroutineScope.launch(Dispatchers.IO) {
                     client.statusState.collect {
                         _isConnect.value = it == Status.COMPLETED
                     }
                 }
 
-                GlobalScope.launch(Dispatchers.IO) {
+                coroutineScope.launch(Dispatchers.IO) {
                     client.incomingText.collect { message ->
                         val mutableChat = mutableListOf<Message>()
                         mutableChat.addAll(_chat.value)
@@ -59,7 +61,7 @@ class RobotImp(
 
     override fun connect() {
         if (client.statusState.value != Status.COMPLETED && client.statusState.value != Status.CONNECTING) {
-            GlobalScope.launch(Dispatchers.IO) {
+            coroutineScope.launch(Dispatchers.IO) {
                 client.connect(ip, port)
             }
         }
@@ -86,7 +88,7 @@ class RobotImp(
     }
 
     companion object {
-        fun getRobotFromString(string: String): Robot {
+        fun getRobotFromString(string: String, coroutineScope: CoroutineScope): Robot {
             val split = string.split("\n")
             val name = split[0].trim()
             val ip = split[1].trim()
@@ -97,7 +99,8 @@ class RobotImp(
                 name = name,
                 ip = ip,
                 port = port.toInt(),
-                color = Color(color[0].toFloat(), color[1].toFloat(), color[2].toFloat())
+                color = Color(color[0].toFloat(), color[1].toFloat(), color[2].toFloat()),
+                coroutineScope = coroutineScope
             )
             val messages = mutableListOf<Message>()
             for (i in 4..split.lastIndex) {
