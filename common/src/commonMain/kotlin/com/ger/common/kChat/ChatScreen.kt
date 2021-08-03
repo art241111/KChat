@@ -77,6 +77,10 @@ private fun ChatHeader(
                 text = "${robot.ip}: ${robot.port}",
                 fontSize = 14.sp
             )
+            Text(
+                text = if (robot.isConnect.value) "online" else "offline",
+                fontSize = 12.sp
+            )
         }
     }
 }
