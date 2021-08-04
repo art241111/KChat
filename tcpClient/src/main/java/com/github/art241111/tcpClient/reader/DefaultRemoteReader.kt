@@ -67,7 +67,8 @@ class DefaultRemoteReader : RemoteReader {
                     val letter = reader.next()
                     _incomingLetter.emit(letter)
 
-                    if (letter.contains("\n")) {
+
+                    if (letter.contains("\n") || world.contains("login:")) {
                         if (isLogging) {
                             println("DEFAULT_READER: $world")
                         }

@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.4.0"
+    id("org.jetbrains.compose") version "0.5.0-build270"
 }
 
 group = "com.ger"
@@ -32,8 +32,15 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "jvm"
+            packageName = "KAGChat"
             packageVersion = "1.0.0"
+            copyright = "© 2021 Gerasimov AV. All rights reserved."
+
+            nativeDistributions {
+                windows {
+                    iconFile.set(project.file("icon.ico"))
+                }
+            }
         }
     }
 }

@@ -4,15 +4,27 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
 import com.ger.common.kChat.data.Message
 
-interface Robot {
-    val name: String
-    val ip: String
-    val color: Color
-    val port: Int
-    val isConnect: State<Boolean>
+abstract class Robot {
+    abstract val name: String
+    abstract val ip: String
+    abstract val color: Color
+    abstract val port: Int
+    abstract val isConnect: State<Boolean>
 
-    val chat: State<List<Message>>
-    fun sendMessage(message: String)
-    fun connect()
-    fun disconnect()
+    abstract val chat: State<List<Message>>
+    abstract fun sendMessage(message: String)
+    abstract fun connect()
+    abstract fun disconnect()
+
+
+    override fun toString(): String {
+        return "$name\n" +
+                "$ip\n" +
+                "$port\n" +
+                "${color.red};${color.green};${color.blue}" +
+                if (chat.value.isNotEmpty())
+                    chat.value.joinToString(prefix = "\n", separator = "\n")
+                else
+                    ""
+    }
 }

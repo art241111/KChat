@@ -15,8 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
@@ -29,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ger.common.data.Robot
 import com.ger.common.data.RobotsListProvider
 import com.ger.common.theme.KChatTheme
 import com.ger.common.theme.LightGray
@@ -38,7 +43,8 @@ fun RobotsList(
     modifier: Modifier = Modifier,
     robotsListProvider: RobotsListProvider,
     onSelectRobot: (Int) -> Unit,
-    selectIndex: State<Int>
+    selectIndex: State<Int>,
+    deleteRobot: (Robot) -> Unit,
 ) {
     val robots = remember() { robotsListProvider.robots }
     LazyColumn(
@@ -54,6 +60,9 @@ fun RobotsList(
                     isActive = index == selectIndex.value,
                     onSelectRobot = {
                         onSelectRobot(index)
+                    },
+                    deleteRobot = {
+                        deleteRobot(robot)
                     }
                 )
             }
@@ -70,7 +79,7 @@ fun RobotCard(
     color: Color,
     isActive: Boolean,
     onSelectRobot: () -> Unit,
-
+    deleteRobot: () -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth().clickable { onSelectRobot() },
@@ -79,38 +88,47 @@ fun RobotCard(
         shape = RectangleShape,
         backgroundColor = if (isActive) LightGray else MaterialTheme.colors.surface
     ) {
-        Row(
-            modifier = modifier.padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Box {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
 
-            RobotIcon(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                name = name,
-                size = 50.dp,
-                color = color,
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Column {
-                Text(
-                    text = name,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                RobotIcon(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    name = name,
+                    size = 50.dp,
+                    color = color,
                 )
 
-                Spacer(modifier.height(3.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-                Text(
-                    text = "Ip: $ip",
-                    fontSize = 14.sp
-                )
-                Spacer(modifier.height(2.dp))
-                Text(
-                    text = "Port: $port",
-                    fontSize = 14.sp
-                )
+                Column {
+                    Text(
+                        text = name,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+
+                    Spacer(modifier.height(3.dp))
+
+                    Text(
+                        text = "Ip: $ip",
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier.height(2.dp))
+                    Text(
+                        text = "Port: $port",
+                        fontSize = 14.sp
+                    )
+                }
+            }
+
+            IconButton(
+                modifier = Modifier.align(Alignment.TopEnd).padding(10.dp).size(17.dp),
+                onClick = deleteRobot
+            ) {
+                Icon(Icons.Default.Close, "X")
             }
         }
     }

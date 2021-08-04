@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,12 +22,15 @@ import com.ger.common.utils.HorizontalSeparator
 
 @Composable
 fun App(
+    navigation: Navigation,
     robotsListProvider: RobotsListProvider,
     onAddRobot: (robotName: String, robotIp: String, robotPort: String) -> Unit
 ) {
-    val navigation = remember { Navigation() }
+
     val index = navigation.indexSelectedRobot
-    val robot = robotsListProvider.robots.value[index.value]
+
+    val robot =
+        if (index.value < robotsListProvider.robots.value.size) robotsListProvider.robots.value[index.value] else robotsListProvider.robots.value[0]
 
     KChatTheme {
         BoxWithConstraints(
@@ -76,7 +78,10 @@ private fun BoxScope.BigScreen(
             },
             compactMode = true,
             robotsListProvider = robotsListProvider,
-            selectIndex = navigation.indexSelectedRobot
+            selectIndex = navigation.indexSelectedRobot,
+            deleteRobot = {
+                robotsListProvider.deleteRobot(it)
+            }
         )
 
         when (navigation.state.value) {
@@ -148,7 +153,10 @@ fun SmallScreen(
                     robotsListProvider.robots.value[position].connect()
                 },
                 robotsListProvider = robotsListProvider,
-                selectIndex = navigation.indexSelectedRobot
+                selectIndex = navigation.indexSelectedRobot,
+                deleteRobot = {
+                    robotsListProvider.deleteRobot(it)
+                }
             )
         }
     }
