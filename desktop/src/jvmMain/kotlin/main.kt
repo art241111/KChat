@@ -1,8 +1,10 @@
 import RobotsListProviderImp.Companion.createRoboListProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -33,6 +35,7 @@ fun main() = application {
     }
 
     Window(
+        icon = painterResource("robot.png"),
         onCloseRequest = {
             robotsListProviderImp.disconnectAll()
             coroutineScope.launch(Dispatchers.IO) {

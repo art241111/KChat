@@ -32,8 +32,15 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "jvm"
+            packageName = "KAGChat"
             packageVersion = "1.0.0"
+            copyright = "© 2021 Gerasimov AV. All rights reserved."
+
+            nativeDistributions {
+                windows {
+                    iconFile.set(project.file("icon.ico"))
+                }
+            }
         }
     }
 }
