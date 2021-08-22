@@ -41,7 +41,7 @@ fun main() = application {
             coroutineScope.launch(Dispatchers.IO) {
                 FileDataHelper.writeContentAsync("robot.data", robotsListProviderImp.toString().toByteArray())
             }
-            coroutineScope.cancel()
+//            coroutineScope.cancel()
             this.exitApplication()
 
         },
