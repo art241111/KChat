@@ -20,7 +20,8 @@ fun KChat(
     Column(modifier = modifier) {
         Chat(
             modifier = Modifier.weight(1f).padding(10.dp),
-            messages = messages
+            messages = messages,
+            onSendMessage = onSend
         )
 
         HorizontalSeparator()

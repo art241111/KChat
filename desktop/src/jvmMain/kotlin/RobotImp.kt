@@ -80,9 +80,10 @@ class RobotImp(
         mutableChat.add(MessageImp(message, Sender.USER))
 
         _chat.value = mutableChat
-
-        if (client.statusState.value == Status.COMPLETED) {
-            client.send(message)
+        if (!(message.contains("button") && message.contains("<") && message.contains(">"))) {
+            if (client.statusState.value == Status.COMPLETED) {
+                client.send(message)
+            }
         }
     }
 

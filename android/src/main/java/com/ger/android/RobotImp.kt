@@ -94,7 +94,9 @@ class RobotImp(
 
         if (client.statusState.value == Status.COMPLETED) {
             GlobalScope.launch(Dispatchers.IO) {
-                client.send(message)
+                if (!(message.contains("button") && message.contains("<") && message.contains(">"))) {
+                    client.send(message)
+                }
             }
         }
     }

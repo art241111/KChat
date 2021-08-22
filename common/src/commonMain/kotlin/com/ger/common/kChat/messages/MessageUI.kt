@@ -1,12 +1,6 @@
 package com.ger.common.kChat
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,22 +13,21 @@ import com.ger.common.theme.Gray
 import com.ger.common.theme.LightGray
 import com.ger.common.theme.RobotMessageColor
 import com.ger.common.theme.UserMessageColor
+import java.awt.SystemColor.text
 
 @Composable
 internal fun Message(
     modifier: Modifier = Modifier,
     color: Color,
-    text: String,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Card(
         modifier = modifier.padding(5.dp),
         backgroundColor = color
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            text = text,
-            color = Color.White
-        )
+        Box {
+            content()
+        }
     }
 }
 
@@ -42,13 +35,13 @@ internal fun Message(
 internal fun RobotMessage(
     modifier: Modifier = Modifier,
     color: Color = RobotMessageColor,
-    text: String,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterStart
     ) {
-        Message(color = color, text = text)
+        Message(color = color, content = content)
     }
 }
 
@@ -56,12 +49,12 @@ internal fun RobotMessage(
 internal fun UserMessage(
     modifier: Modifier = Modifier,
     color: Color = UserMessageColor,
-    text: String,
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.CenterEnd
     ) {
-        Message(color = color, text = text)
+        Message(color = color, content = content)
     }
 }
