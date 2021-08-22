@@ -21,26 +21,26 @@ import java.awt.SystemColor.text
 @Composable
 internal fun Chat(
     modifier: Modifier = Modifier,
-    messages: State<List<Message>>,
+    messages: List<Message>,
     onSendMessage: (String) -> Unit
 ) {
     // Remember a CoroutineScope to be able to launch
     val coroutineScope = rememberCoroutineScope()
 
-    val state = rememberLazyListState(messages.value.size)
+    val state = rememberLazyListState(messages.size)
     LazyColumn(
         state = state,
         modifier = modifier,
         verticalArrangement = Arrangement.Bottom
     ) {
-        messages.value.forEach {
+        messages.forEach {
             item(key = it) {
                 MessageFactory(it, onSendMessage)
             }
         }
 
         coroutineScope.launch {
-            state.scrollToItem(messages.value.size)
+            state.scrollToItem(messages.size)
         }
     }
 }

@@ -1,7 +1,12 @@
 package com.ger.common.kChat.messages
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,16 +21,21 @@ import com.ger.common.kChat.data.Sender
 internal fun MessageFactory(
     message: Message,
     onSendMessage: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val onPin = { message.isPin.value = true }
     when (message.sender) {
         Sender.USER -> {
-            UserMessage {
+            UserMessage(
+                modifier = modifier,
+                onPin = onPin
+            ) {
                 when {
                     // button<text,action>
                     message.text.contains("button") -> {
-                        UserMessageWithButton(message.text, onSendMessage)
+                        UserMessageWithButton(message.text, onSendMessage, onPin)
                     }
-                    else ->{
+                    else -> {
                         Text(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                             text = message.text,
@@ -36,7 +46,10 @@ internal fun MessageFactory(
             }
         }
         Sender.ROBOT -> {
-            RobotMessage {
+            RobotMessage(
+                modifier = modifier,
+                onPin = onPin
+            ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                     text = message.text,
@@ -47,16 +60,20 @@ internal fun MessageFactory(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UserMessageWithButton (
-    message:String,
-    onSendMessage: (String) -> Unit
+fun UserMessageWithButton(
+    message: String,
+    onSendMessage: (String) -> Unit,
+    onPin: () -> Unit
 ) {
     val split = message.substringAfter('<').substringBefore('>').split(",")
-    Button(
-        onClick = {
+    Surface(
+        modifier = Modifier.combinedClickable(onLongClick = onPin) {
             onSendMessage(split[1].trim())
-        }
+        },
+        color = MaterialTheme.colors.primary,
+        shape = MaterialTheme.shapes.small
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
