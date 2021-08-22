@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ger.common.kChat.data.Message
+import com.ger.common.kChat.data.Sender
 import com.ger.common.utils.HorizontalSeparator
 
 @Composable
@@ -26,7 +27,8 @@ fun KChat(
 
         SendPanel(
             onSend = onSend,
-            isActive = isConnect.value
+            isActive = isConnect.value,
+            userMessages = messages.value.filter { it.sender == Sender.USER }
         )
     }
 }

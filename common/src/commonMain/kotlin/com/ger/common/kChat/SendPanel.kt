@@ -13,11 +13,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,6 +23,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.ger.common.kChat.data.Message
 import com.ger.common.strings.S
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -35,9 +32,20 @@ internal fun SendPanel(
     modifier: Modifier = Modifier,
     defaultValue: String = "",
     onSend: (String) -> Unit,
+    userMessages: List<Message>,
     isActive: Boolean
 ) {
     var txt by remember { mutableStateOf(defaultValue) }
+    var userMessageIndex by remember { mutableStateOf(-1.5) }
+
+    LaunchedEffect(userMessageIndex) {
+        if (userMessageIndex > -1 && userMessages.lastIndex >= userMessageIndex) {
+            txt = userMessages[userMessages.lastIndex - userMessageIndex.toInt()].text
+        } else if (userMessageIndex < -1) {
+            txt = ""
+            userMessageIndex = -1.0
+        }
+    }
     Row(
         modifier = modifier.padding(start = 10.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -45,10 +53,18 @@ internal fun SendPanel(
         TextField(
 //            enabled = isActive,
             modifier = Modifier.weight(1f).onPreviewKeyEvent {
-                when {
-                    (it.key == Key.Enter) -> {
+                when (it.key) {
+                    Key.Enter -> {
                         onSend(txt)
                         txt = ""
+                        true
+                    }
+                    Key.DirectionUp -> {
+                        userMessageIndex += 0.5
+                        true
+                    }
+                    Key.DirectionDown -> {
+                        userMessageIndex--
                         true
                     }
                     else -> false
